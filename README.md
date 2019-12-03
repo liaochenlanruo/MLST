@@ -1,8 +1,14 @@
-# 文件准备
+# 说明
+
+本pipeline适用于Bc群菌株的MLST批量分型，若想用于其他物种的分型，需要自行更换数据库，并修改脚本中的等位基因信息。
+
+# 操作步骤
+
+## 文件准备
 
 下载[MLST profiles](https://pubmlst.org/bigsdb?db=pubmlst_bcereus_seqdef&page=downloadProfiles&scheme_id=1)，并保存为“MLST_Profiles.txt”。
 
-# 建立数据库
+## 建立数据库
 
 下载Bc Group的[七个管家基因序列](https://pubmlst.org/bigsdb?db=pubmlst_bcereus_seqdef&page=downloadAlleles)并合并至一个文件“alleles.fa”，并构建数据库
 
@@ -10,9 +16,9 @@
 makeblastdb -in alleles.fa -out alleles -dbtype nucl
 ```
 
-# 将“alleles.nhr”、“alleles.nin”、“alleles.nsq”、“MLST_Profiles.txt”以及三个perl脚本拷贝到工作目录中
+将“alleles.nhr”、“alleles.nin”、“alleles.nsq”、“MLST_Profiles.txt”以及三个perl脚本拷贝到工作目录中
 
-# Blast比对等位基因并获取等位基因编号/序列
+## Blast比对等位基因并获取等位基因编号/序列
 
 以基因组的scaffold/基因序列为query，与管家基因库“alleles”比对。
 
@@ -37,7 +43,7 @@ perl blastn.ffn.pl
 getST.v4.pl
 ```
 
-# 获取序列型(ST)
+## 获取序列型(ST)
 
 ```
 perl add.ST_type.pl
