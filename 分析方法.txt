@@ -1,33 +1,50 @@
-#“*”代表管家基因的名字。
+# 文件准备
 
-1.下载Bc group的七个管家基因序列；
+下载[MLST profiles](https://pubmlst.org/bigsdb?db=pubmlst_bcereus_seqdef&page=downloadProfiles&scheme_id=1)，并保存为“MLST_Profiles.txt”。
 
-2.将7个管家基因序列分别建库；
+# 建立数据库
 
-3.以II型基因组的scaffold为query，以管家基因为库，进行blastn（blast_mlst.pl）；
+下载Bc Group的[七个管家基因序列](https://pubmlst.org/bigsdb?db=pubmlst_bcereus_seqdef&page=downloadAlleles)并合并至一个文件“alleles.fa”，并构建数据库
 
-4.分别合并各个管家基因的blast结果得到“All_*2.txt”（co_blastn2.pl）；
+```
+makeblastdb -in alleles.fa -out alleles -dbtype nucl
+```
 
-5.提取比对坐标得到“All_*.txt”（co_blastn.pl）；
+# 将“alleles.nhr”、“alleles.nin”、“alleles.nsq”、“MLST_Profiles.txt”以及三个perl脚本拷贝到工作目录中
 
-6.根据坐标文档到“All_scaf.txt”中提取序列得到“*_seqs.fa”（cutseq_v2.pl）；
+# Blast比对等位基因并获取等位基因编号/序列
 
-7.将第4步的结果在表格中排序，将scaffolds的id分别放于“*_normal_ids.txt”与“*_reverse_ids.txt”两个文档中；
+以基因组的scaffold/基因序列为query，与管家基因库“alleles”比对。
 
-8.利用“*_seqs.fa”与“*_normal_ids.txt”两个文档提取正向比对序列（id_seq_normal.pl）；
+- (A) 若数据为从NCBI下载的基因组，则运行“NCBI/GENOME”中的脚本
 
-9.利用“*_seqs.fa”与“*_reverse_ids.txt”两个文档提取反向互补比对序列（id_seq_reverse.pl）；
+```
+perl blastn.ffn.pl
+getST.v7.pl
+```
 
-10.取得“*_seqs_reverse.fa”的反向互补序列“*_seqs_reverse2normal.fa”（reverse_strand_v3.pl）；
+- (B) 若数据为从NCBI下载的基因序列，则运行“NCBI/CDS”中的脚本
 
-11.合并“*_seqs_normal.fa”与“*_seqs_reverse2normal.fa”得到“*_seqs_all.fa”;
+```
+perl blastn.ffn.pl
+getST.v6.pl
+```
 
-12.合并所有的“*_seqs_all.fa”得到“All_loci_seqs.fa”文档（co_seqs.pl）；
+- (C) 若为自己测序的数据，建议进行基因组组装和基因预测，以基因序列为query，运行“Others”中的脚本
 
-13.根据ID文档“genotype2_complete.list.txt”和“All_loci_seqs.fa”文档将序列按基因组进行拆分（split.pl）；
+```
+perl blastn.ffn.pl
+getST.v4.pl
+```
 
-14.链接每个基因组的7个管家基因为一条序列得到“All_str_locis.fa”（conjugate_locis.pl）；
+# 获取序列型(ST)
 
-15.检查管家基因的排列顺序（check_order.pl）；
+```
+perl add.ST_type.pl
+```
 
-16.对“All_str_locis.fa”进行alignment，构建进化树。
+or
+
+```
+perl add.ST_type3.pl
+```
