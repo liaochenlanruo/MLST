@@ -1,6 +1,19 @@
 # 说明
 
-本pipeline适用于Bc群菌株的MLST批量分型，若想用于其他物种的分型，需要自行更换数据库，并修改脚本中的等位基因信息。
+本pipeline适用于Bc群菌株的MLST批量分型，若想用于其他物种的分型，需要自行更换数据库，并修改脚本中的等位基因信息。运行脚本前用于需要注意观察“blastn.ffn.pl”中输入文件的后缀名是否和自己的数据匹配，若不匹配，需要修改脚本中的第5、7行的“.ffn”为自己的后缀名。
+
+```
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my @fas=glob("*.ffn");
+foreach  (@fas) {
+	$_=~/(\S+).ffn/;
+	my $str = $1 . ".bln";
+	system("blastn -query $_ -out $str -db alleles -outfmt 6 -evalue 1e-3 -max_target_seqs 1 -num_threads 6");
+}
+```
 
 # 操作步骤
 
@@ -36,7 +49,7 @@ perl blastn.ffn.pl
 getST.v6.pl
 ```
 
-- (C) 若为自己测序的数据，建议进行基因组组装和基因预测，以基因序列为query，运行“Others”中的脚本
+- (C) 若为自己测序的数据，建议进行基因组组装和基因预测(原核生物基因组组装及基因预测可用[PGCGAP](https://github.com/liaochenlanruo/pgcgap)完成)，以基因序列为query，运行“Others”中的脚本
 
 ```
 perl blastn.ffn.pl
@@ -47,10 +60,4 @@ getST.v4.pl
 
 ```
 perl add.ST_type.pl
-```
-
-or
-
-```
-perl add.ST_type3.pl
 ```
